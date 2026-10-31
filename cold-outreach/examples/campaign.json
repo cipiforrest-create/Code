@@ -1,0 +1,62 @@
+{
+  "campaign": "pricing-gap-q4",
+  "start_date": "2026-11-02",
+  "sender": {
+    "name": "Digital X Marketing",
+    "postal_address": "Digital X Marketing, Sarajevo 71000, Bosnia and Herzegovina"
+  },
+  "mailboxes": [
+    "sam@mail.example.com",
+    "sam2@mail.example.com"
+  ],
+  "warmup": {
+    "warmup_started": "2026-10-26",
+    "start_per_mailbox": 5,
+    "increment_per_week": 5,
+    "steady_cap": 30
+  },
+  "icp": {
+    "titles": [
+      "head of sales",
+      "vp sales",
+      "founder",
+      "chief revenue"
+    ],
+    "employee_range": [
+      20,
+      300
+    ],
+    "min_score": 60
+  },
+  "basis_required_countries": [
+    "BG",
+    "DE",
+    "ES",
+    "FR",
+    "GB",
+    "GR",
+    "HR",
+    "IE",
+    "IT",
+    "NL",
+    "RO",
+    "SI"
+  ],
+  "sequence": [
+    {
+      "name": "first",
+      "day": 0,
+      "template": "examples/templates/first.txt"
+    },
+    {
+      "name": "follow_up",
+      "day": 3,
+      "template": "examples/templates/follow_up.txt"
+    },
+    {
+      "name": "breakup",
+      "day": 10,
+      "template": "examples/templates/breakup.txt"
+    }
+  ]
+}

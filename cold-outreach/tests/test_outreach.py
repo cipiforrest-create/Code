@@ -109,6 +109,15 @@ class LintTests(unittest.TestCase):
         _, blocked = self.lint(footer_render(GOOD_FIRST), company="Initech")
         self.assertTrue(blocked)
 
+    def test_non_latin_words_are_counted(self):
+        text = footer_render("Subject: pricing after the limit\n\n" + "Здраво " * 60 + "?")
+        findings, _ = self.lint(text)
+        self.assertNotIn("length", [r for _, r, _ in findings])
+
+    def test_trademark_symbol_in_company_name_is_ignored(self):
+        findings, _ = self.lint(footer_render(GOOD_FIRST), company="Acme®")
+        self.assertNotIn("personalization", [r for _, r, _ in findings])
+
     def test_long_subject_blocks(self):
         _, blocked = self.lint(footer_render(GOOD_FIRST.replace("pricing after the limit", "a very long subject line here")))
         self.assertTrue(blocked)

@@ -254,7 +254,7 @@ def lint_text(text, step, cfg, company=""):
 
     main, _, footer = body.partition("\n--\n")
     lo, hi = LENGTH.get(step, DEFAULT_LENGTH)
-    words_in_body = len(re.findall(r"[A-Za-z0-9'’-]+", main))
+    words_in_body = len(re.findall(r"[^\W_]+(?:['’-][^\W_]+)*", main))
     if not lo <= words_in_body <= hi:
         add("BLOCK", "length", f"body is {words_in_body} words; target {lo}-{hi}")
 
@@ -276,7 +276,8 @@ def lint_text(text, step, cfg, company=""):
         if word in (subject + " " + lowered).lower():
             add("WARN", "spam-word", f"contains '{word}'")
 
-    if company and company.lower() not in lowered:
+    company_key = re.sub(r"[®™©]", "", company).strip().lower()
+    if company_key and company_key not in lowered:
         add("BLOCK", "personalization", f"company name '{company}' is not in the body")
 
     if cfg["sender"]["postal_address"] not in footer:

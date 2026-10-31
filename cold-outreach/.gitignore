@@ -1,5 +1,5 @@
 # Campaign run state holds real prospect data. Keep it out of git.
 run/
-campaign.json
+/campaign.json
 __pycache__/
 *.pyc
