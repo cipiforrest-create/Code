@@ -1,0 +1,9 @@
+email,first_name,last_name,company,title,country,employees,website,signal,lawful_basis_ref
+jane@acme.example,Jane,Doe,Acme,Head of Sales,US,120,acme.example,"Your plans list three tiers with no overage price.",
+rob@acme.example,Rob,Lind,Acme,VP Sales,US,300,acme.example,,
+lee@globex.example,Lee,Park,Globex,VP Sales,US,250,globex.example,"Your enterprise plan has no price on the pricing page.",
+info@initech.example,Info,,Initech,Founder,US,40,initech.example,"Your pricing page has no annual option.",
+sam@hooli.example,Sam,Kim,Hooli,Founder,DE,60,hooli.example,"Your plans have no annual discount listed.",
+ana@umbrella.example,Ana,Ruiz,Umbrella,Marketing Director,US,80,umbrella.example,"Your pricing page has no free tier.",
+kai@wayne.example,Kai,Lo,Wayne Enterprises,Head of Sales,US,900,wayne.example,"Your plans have no usage limits listed.",
+mia@stark.example,Mia,Chen,Stark Labs,Founder,US,35,stark.example,"Your pricing page does not say what happens past the usage limit.",

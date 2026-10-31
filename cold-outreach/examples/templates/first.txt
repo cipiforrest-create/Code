@@ -1,0 +1,11 @@
+Subject: pricing after the limit
+
+Hi {{first_name}},
+
+Quick thing I noticed on {{company}}'s pricing page. {{signal}}
+
+Buyers who hit a usage cap with no stated price usually stop comparing instead of asking sales. That makes the trial convert less than it should, and the gap shows up before anyone talks to your team.
+
+Is this something your team has looked at yet?
+
+{{sender_name}}

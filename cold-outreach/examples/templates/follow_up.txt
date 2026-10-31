@@ -1,0 +1,11 @@
+Subject: pricing after the limit
+
+Hi {{first_name}},
+
+Following up on my note about {{company}}'s pricing page. {{signal}}
+
+A one-line answer to "what happens at the limit" is usually a quick change, and it removes the guessing for buyers who are close to a decision.
+
+Would a short example of how other teams phrase it be useful?
+
+{{sender_name}}

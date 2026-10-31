@@ -1,0 +1,9 @@
+Subject: closing the loop
+
+Hi {{first_name}},
+
+This is my last note about {{company}}'s pricing page. {{signal}}
+
+If the limit question is not a priority, no reply is needed and I will not follow up again. Should I close the file, or is a quick reply worth it?
+
+{{sender_name}}
