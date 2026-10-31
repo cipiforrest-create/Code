@@ -308,13 +308,13 @@ fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 12px; grid-colu
     <div class="wrap">
       <div class="ring-head">
         <div>
-          <p class="label" data-t="ring_label">Deset odabranih</p>
+          <p class="label" data-t="ring_label">Odabrani kadrovi</p>
           <h2 data-t="ring_title">Kadrovi koji <em>pričaju.</em></h2>
         </div>
         <p class="hint" data-t="ring_hint">Povucite za okretanje, kliknite za uvećanje.</p>
       </div>
     </div>
-    <div class="stage" id="stage" tabindex="0" role="region" aria-roledescription="3D galerija" aria-label="Deset odabranih fotografija"></div>
+    <div class="stage" id="stage" tabindex="0" role="region" aria-roledescription="3D galerija" aria-label="Odabrane fotografije"></div>
     <div class="wrap ring-foot">
       <p class="ring-cap" aria-live="polite"><b id="ring-count">01 / 10</b><span id="ring-title"></span></p>
       <div class="ring-nav">
@@ -453,21 +453,21 @@ fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 12px; grid-colu
 <script>
 // ---------- content (in the real site this comes from the editable content file) ----------
 const HERO = [
-  ["h-a-m-117", "Portret nevjeste u satenskoj haljini i prozirnim rukavicama"],
-  ["h-img-6836", "Portret nevjeste uz bijelo cvijeće u sumrak"],
-  ["h-n-k-4", "Mladenci slave s gostima ispod oblaka šarenog dima"],
-  ["h-img-6655", "Nevjesta s bijelim buketom tokom priprema"],
   ["h-a-m-231", "Mladenci zagrljeni uz buket bijelih ruža"],
-  ["h-img-6833", "Nevjesta s bijelim cvjetnim aranžmanom i morem u pozadini"],
+  ["h-img-6834", "Mladenci tokom ceremonije na terasi iznad mora"],
+  ["h-img-8918", "Nevjesta s buketom u toplom svjetlu svečane sale"],
+  ["h-a-m-196", "Crno-bijeli portret mladenaca u nježnom zagrljaju"],
+  ["h-img-8422", "Nevjesta s dugim šlepom na stazi u parku"],
+  ["h-img-9228", "Mladenci zagrljeni ispred fasade s visokim lučnim prozorima"],
   ["h-img-8986", "Portret nasmijane nevjeste pored bijele zavjese"],
-  ["h-a-m-196", "Crno-bijeli portret mladenaca u nježnom zagrljaju"]
+  ["h-a-m-269", "Mladoženja grli nevjestu s dugom valovitom kosom"]
 ].map(([f, alt]) => ({ src: "img/" + f + ".webp", alt }));
 
 const GALLERY = [
-  ["g-a-m-279", "Svjetlo i svila", "Nevjesta s buketom bijelih ruža pored prozora"],
+  ["g-img-8419", "Pod velom", "Nevjesta obavijena velom na stazi među drvećem"],
   ["g-img-7086", "Slavlje u bojama", "Mladenci slave među šarenim mlazovima dima"],
   ["g-img-6650", "Posljednji detalji", "Priprema šminke nevjeste prije vjenčanja"],
-  ["g-img-6654", "Zajedno na suncu", "Mladenci na kamenoj terasi s pogledom na planine"],
+  ["g-img-9272", "Arhitektura susreta", "Mladenci hodaju držeći se za ruke ispred elegantne gradske fasade"],
   ["g-img-9033", "Najbliže uz mene", "Nevjesta hoda s prijateljicama u šarenim svečanim haljinama"],
   ["g-img-7854", "Noćni poljubac", "Mladenci se ljube pod noćnim nebom"],
   ["g-m-m-48", "Pogledi koji govore", "Crno-bijela fotografija para koji se drži za ruke"],
@@ -475,16 +475,17 @@ const GALLERY = [
 ].map(([f, title, alt]) => ({ src: "img/" + f + ".webp", title, alt }));
 
 const RING = [
-  ["c-a-m-269", "Blizina", "Mladoženja grli nevjestu s dugom valovitom kosom"],
-  ["c-img-6839", "Poljubac u suton", "Mladenci se ljube na terasi s pogledom na more"],
-  ["c-img-6834", "Trenutak obećanja", "Mladenci tokom ceremonije na terasi iznad mora"],
-  ["c-img-8918", "Večernji sjaj", "Nevjesta s buketom u toplom svjetlu svečane sale"],
-  ["c-img-9228", "Ispod gradskih prozora", "Mladenci zagrljeni ispred fasade s visokim lučnim prozorima"],
-  ["c-ws-14", "Na obali dana", "Nevjesta uz bijelo cvijeće s morem i otocima u pozadini"],
-  ["c-m-m-67", "Lagana šetnja", "Crno-bijela fotografija para u šetnji pored bazena"],
-  ["c-img-8422", "Svila u pokretu", "Nevjesta s dugim šlepom na stazi u parku"],
-  ["c-img-8419", "Pod velom", "Nevjesta obavijena velom na stazi među drvećem"],
-  ["c-img-8662", "Plavo odijelo", "Mladoženja namješta leptir-mašnu u vrtu"]
+  ["c-ws-14", "Na obali dana", "Nevjesta u satenskoj haljini s prorezom među cvjetnim aranžmanima, more i otoci u sumrak"],
+  ["c-n-k-4", "Sve boje slavlja", "Mladenci se ljube pod lukom dok iznad njih eksplodiraju šareni mlazovi dima"],
+  ["c-img-8662", "Plavo odijelo", "Mladoženja u plavom odijelu s leptir-mašnom, snimljen iz kosog ugla u vrtu"],
+  ["c-img-8444", "Zajednički koraci", "Nevjesta na vrhu bijelog stepeništa, mladoženja prekrštenih ruku ispod nje"],
+  ["c-img-6839", "Poljubac u suton", "Mladenci zagrljeni u vinogradu iznad mora, sunce iza njih"],
+  ["c-img-6836", "Pod večernjim nebom", "Portret nevjeste u čipkastoj haljini s buketom, more u sumrak iza nje"],
+  ["c-img-6833", "Večer uz more", "Nevjesta s buketom pored visokog cvjetnog aranžmana u vinogradu iznad mora"],
+  ["c-img-6655", "Bijele ruže", "Nevjesta s buketom bijelih kala sjedi u starinskom automobilu, snimljena odozgo"],
+  ["c-img-6654", "Zajedno na suncu", "Mladenci pored starinskog kabrioleta, mladoženja u sunčanim naočalama"],
+  ["c-a-m-279", "Svjetlo i svila", "Nevjesta s čipkastim rukavicama i buketom kala ispred kamene fasade"],
+  ["c-a-m-117", "Tišina prije dana", "Portret nevjeste u čipkastim rukavicama i ogrlici, sjedi za stolom"]
 ].map(([f, title, alt]) => ({ src: "img/" + f + ".webp", title, alt }));
 
 // ---------- translations ----------
@@ -495,7 +496,7 @@ const T = {
     hero_title: "Modno. Odvažno. <em>Iskreno.</em>",
     hero_sub: "Editorial fotografija vjenčanja. Bazirana u Sarajevu, dostupna širom Hrvatske i Evrope.",
     where_label: "Gdje fotografišem", where_europe: "cijela Evropa",
-    ring_label: "Deset odabranih", ring_title: "Kadrovi koji <em>pričaju.</em>", ring_hint: "Povucite za okretanje, kliknite za uvećanje.",
+    ring_label: "Odabrani kadrovi", ring_title: "Kadrovi koji <em>pričaju.</em>", ring_hint: "Povucite za okretanje, kliknite za uvećanje.",
     about_photo: "Vaš portret uskoro", about_label: "O meni", about_title: "Ja sam Ajla.",
     about_lead: "Fotografišem vjenčanja kao modne priče, s parovima koji žele fotografije s karakterom.",
     about_body: "Radim iz Sarajeva i putujem za vašim danom: od jadranske obale do bilo koje evropske destinacije. Do vjenčanja se upoznamo, isplaniramo kadrove i lokacije, a na dan budem tu da sve izgleda lako.",
@@ -528,7 +529,7 @@ const T = {
     hero_title: "Fashion. Bold. <em>Honest.</em>",
     hero_sub: "Editorial wedding photography. Based in Sarajevo, available across Croatia and Europe.",
     where_label: "Where I shoot", where_europe: "all of Europe",
-    ring_label: "Ten favourites", ring_title: "Frames that <em>tell a story.</em>", ring_hint: "Drag to spin, click to enlarge.",
+    ring_label: "Selected frames", ring_title: "Frames that <em>tell a story.</em>", ring_hint: "Drag to spin, click to enlarge.",
     about_photo: "Your portrait coming soon", about_label: "About me", about_title: "I'm Ajla.",
     about_lead: "I photograph weddings like fashion stories, for couples who want pictures with character.",
     about_body: "I work from Sarajevo and travel to your day, from the Adriatic coast to any European destination. Before the wedding we meet and plan the shots and locations; on the day I'm there to make it all feel easy.",
