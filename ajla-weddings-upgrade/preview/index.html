@@ -104,6 +104,32 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   .hero-copy { bottom: 32px; }
 }
 
+/* ---------- 3D ring gallery ---------- */
+.ring-sec { padding-block: clamp(56px, 8vw, 100px) clamp(48px, 6vw, 80px); overflow: hidden; }
+.ring-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 32px; margin-bottom: clamp(8px, 2vw, 24px); }
+.ring-head h2 { font-size: var(--step-3); }
+.ring-head .label { color: var(--accent); margin-bottom: 12px; }
+.ring-head .hint { color: var(--muted); font-size: .92rem; }
+.stage { --cw: clamp(190px, 20vw, 290px); position: relative; height: calc(var(--cw) * 1.5 + 90px); perspective: 1800px; perspective-origin: 50% 40%; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+.stage.dragging { cursor: grabbing; }
+.stage:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+.card { position: absolute; left: 50%; top: 24px; width: var(--cw); aspect-ratio: 2 / 3; margin-left: calc(var(--cw) / -2); padding: 0; border: 0; background: var(--soft); cursor: pointer; backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform, opacity, filter; box-shadow: 0 40px 60px -34px rgba(0,0,0,.55); }
+.card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.ring-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; margin-top: 8px; }
+.ring-cap { grid-column: 2; text-align: center; display: grid; gap: 4px; min-width: 0; }
+.ring-cap b { font-weight: 400; font-size: var(--step--1); letter-spacing: .22em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ring-cap span { font-family: var(--display); font-style: italic; font-size: var(--step-2); line-height: 1.1; }
+.ring-nav { grid-column: 3; justify-self: end; display: flex; gap: 10px; }
+.ring-nav button { width: 46px; height: 46px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; font-size: 1.05rem; transition: border-color .2s, background .2s; }
+.ring-nav button:hover { border-color: var(--ink); }
+@media (max-width: 760px) {
+  .stage { --cw: 58vw; }
+  .ring-foot { grid-template-columns: 1fr auto; }
+  .ring-cap { grid-column: 1; text-align: left; }
+  .ring-nav { grid-column: 2; }
+}
+
 /* ---------- destinations ---------- */
 .where { border-bottom: 1px solid var(--line); }
 .where .wrap { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px 32px; padding-block: 22px; }
@@ -277,6 +303,27 @@ fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 12px; grid-colu
     </div>
   </section>
 
+  <!-- 3D galerija: 10 odabranih -->
+  <section class="ring-sec" id="odabrane" aria-label="Odabrane fotografije">
+    <div class="wrap">
+      <div class="ring-head">
+        <div>
+          <p class="label" data-t="ring_label">Deset odabranih</p>
+          <h2 data-t="ring_title">Kadrovi koji <em>pričaju.</em></h2>
+        </div>
+        <p class="hint" data-t="ring_hint">Povucite za okretanje, kliknite za uvećanje.</p>
+      </div>
+    </div>
+    <div class="stage" id="stage" tabindex="0" role="region" aria-roledescription="3D galerija" aria-label="Deset odabranih fotografija"></div>
+    <div class="wrap ring-foot">
+      <p class="ring-cap" aria-live="polite"><b id="ring-count">01 / 10</b><span id="ring-title"></span></p>
+      <div class="ring-nav">
+        <button type="button" id="ring-prev" aria-label="Prethodna fotografija">←</button>
+        <button type="button" id="ring-next" aria-label="Sljedeća fotografija">→</button>
+      </div>
+    </div>
+  </section>
+
   <div class="where">
     <div class="wrap">
       <p class="label" data-t="where_label">Gdje fotografišem</p>
@@ -427,6 +474,19 @@ const GALLERY = [
   ["g-img-9179", "Svjetla grada", "Mladenci u elegantnom hodniku s toplom rasvjetom"]
 ].map(([f, title, alt]) => ({ src: "img/" + f + ".webp", title, alt }));
 
+const RING = [
+  ["c-a-m-269", "Blizina", "Mladoženja grli nevjestu s dugom valovitom kosom"],
+  ["c-img-6839", "Poljubac u suton", "Mladenci se ljube na terasi s pogledom na more"],
+  ["c-img-6834", "Trenutak obećanja", "Mladenci tokom ceremonije na terasi iznad mora"],
+  ["c-img-8918", "Večernji sjaj", "Nevjesta s buketom u toplom svjetlu svečane sale"],
+  ["c-img-9228", "Ispod gradskih prozora", "Mladenci zagrljeni ispred fasade s visokim lučnim prozorima"],
+  ["c-ws-14", "Na obali dana", "Nevjesta uz bijelo cvijeće s morem i otocima u pozadini"],
+  ["c-m-m-67", "Lagana šetnja", "Crno-bijela fotografija para u šetnji pored bazena"],
+  ["c-img-8422", "Svila u pokretu", "Nevjesta s dugim šlepom na stazi u parku"],
+  ["c-img-8419", "Pod velom", "Nevjesta obavijena velom na stazi među drvećem"],
+  ["c-img-8662", "Plavo odijelo", "Mladoženja namješta leptir-mašnu u vrtu"]
+].map(([f, title, alt]) => ({ src: "img/" + f + ".webp", title, alt }));
+
 // ---------- translations ----------
 const T = {
   bs: {
@@ -435,6 +495,7 @@ const T = {
     hero_title: "Modno. Odvažno. <em>Iskreno.</em>",
     hero_sub: "Editorial fotografija vjenčanja. Bazirana u Sarajevu, dostupna širom Hrvatske i Evrope.",
     where_label: "Gdje fotografišem", where_europe: "cijela Evropa",
+    ring_label: "Deset odabranih", ring_title: "Kadrovi koji <em>pričaju.</em>", ring_hint: "Povucite za okretanje, kliknite za uvećanje.",
     about_photo: "Vaš portret uskoro", about_label: "O meni", about_title: "Ja sam Ajla.",
     about_lead: "Fotografišem vjenčanja kao modne priče, s parovima koji žele fotografije s karakterom.",
     about_body: "Radim iz Sarajeva i putujem za vašim danom: od jadranske obale do bilo koje evropske destinacije. Do vjenčanja se upoznamo, isplaniramo kadrove i lokacije, a na dan budem tu da sve izgleda lako.",
@@ -467,6 +528,7 @@ const T = {
     hero_title: "Fashion. Bold. <em>Honest.</em>",
     hero_sub: "Editorial wedding photography. Based in Sarajevo, available across Croatia and Europe.",
     where_label: "Where I shoot", where_europe: "all of Europe",
+    ring_label: "Ten favourites", ring_title: "Frames that <em>tell a story.</em>", ring_hint: "Drag to spin, click to enlarge.",
     about_photo: "Your portrait coming soon", about_label: "About me", about_title: "I'm Ajla.",
     about_lead: "I photograph weddings like fashion stories, for couples who want pictures with character.",
     about_body: "I work from Sarajevo and travel to your day, from the Adriatic coast to any European destination. Before the wedding we meet and plan the shots and locations; on the day I'm there to make it all feel easy.",
@@ -575,13 +637,13 @@ GALLERY.forEach((g, i) => {
   b.type = "button"; b.id = "g-" + i; b.className = "g" + (i + 1);
   b.setAttribute("aria-label", g.title);
   b.innerHTML = `<img src="${g.src}" alt="${g.alt}" loading="lazy" decoding="async"><span>${g.title}</span>`;
-  b.addEventListener("click", () => openLb(i));
+  b.addEventListener("click", () => openLb(GALLERY, i));
   gal.appendChild(b);
 });
 const lb = document.getElementById("lb"), lbImg = document.getElementById("lb-img"), lbCap = document.getElementById("lb-cap");
-let li = 0;
-function showLb(i) { li = (i + GALLERY.length) % GALLERY.length; lbImg.src = GALLERY[li].src; lbImg.alt = GALLERY[li].alt; lbCap.textContent = GALLERY[li].title; }
-function openLb(i) { showLb(i); if (lb.showModal) lb.showModal(); else lb.setAttribute("open", ""); }
+let li = 0, lbList = GALLERY;
+function showLb(i) { li = (i + lbList.length) % lbList.length; lbImg.src = lbList[li].src; lbImg.alt = lbList[li].alt; lbCap.textContent = lbList[li].title; }
+function openLb(list, i) { lbList = list; showLb(i); if (lb.showModal) lb.showModal(); else lb.setAttribute("open", ""); }
 const closeLb = () => lb.close ? lb.close() : lb.removeAttribute("open");
 document.getElementById("lb-x").addEventListener("click", closeLb);
 document.getElementById("lb-pv").addEventListener("click", () => showLb(li - 1));
@@ -591,6 +653,116 @@ lb.addEventListener("click", e => { if (e.target === lb || e.target.classList.co
 let lx = null;
 lb.addEventListener("pointerdown", e => { lx = e.clientX; });
 lb.addEventListener("pointerup", e => { if (lx === null) return; const dx = e.clientX - lx; lx = null; if (Math.abs(dx) > 40) showLb(li + (dx < 0 ? 1 : -1)); });
+
+// ---------- 3D ring gallery ----------
+(() => {
+  const stage = document.getElementById("stage");
+  const N = RING.length, STEP = 360 / N;
+  const cards = RING.map((r, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "card"; b.id = "ring-" + i; b.tabIndex = -1;
+    b.setAttribute("aria-label", r.title);
+    b.innerHTML = `<img src="${r.src}" alt="${r.alt}" decoding="async" ${i < 3 || i > N - 3 ? "" : 'loading="lazy"'}>`;
+    stage.appendChild(b);
+    return b;
+  });
+  const capCount = document.getElementById("ring-count"), capTitle = document.getElementById("ring-title");
+  let rot = 0, target = 0, vel = 0, dragging = false, hovering = false, inView = true, lastX = 0, moved = 0, active = -1, cw = 260, R = 400;
+  const ease = reduced ? 1 : 0.085;
+
+  const norm = a => ((a % 360) + 540) % 360 - 180;   // -180..180
+  function measure() {
+    cw = cards[0].offsetWidth || 260;
+    const narrow = stage.clientWidth < 760;
+    R = cw * (narrow ? 1.25 : 1.95);
+  }
+  function render() {
+    for (let i = 0; i < N; i++) {
+      const a = norm(i * STEP - rot), r = a * Math.PI / 180, c = Math.cos(r);
+      const x = Math.sin(r) * R, z = (c - 1) * R * 1.15;
+      const f = (c + 1) / 2;                            // 1 at front, 0 at back
+      const s = 1 + 0.1 * Math.pow(f, 6);              // the front photo steps forward
+      const el = cards[i];
+      el.style.transform = `translate3d(${x.toFixed(1)}px, 0, ${z.toFixed(1)}px) rotateY(${(-a * 0.5).toFixed(2)}deg) scale(${s.toFixed(3)})`;
+      el.style.opacity = (Math.abs(a) > 128 ? 0 : 0.18 + 0.82 * Math.pow(f, 1.4)).toFixed(3);
+      el.style.filter = `brightness(${(0.55 + 0.45 * f).toFixed(3)}) saturate(${(0.6 + 0.4 * f).toFixed(3)})`;
+      el.style.zIndex = String(Math.round(f * 100));
+      el.style.pointerEvents = Math.abs(a) > 100 ? "none" : "auto";
+    }
+    const idx = ((Math.round(rot / STEP) % N) + N) % N;
+    if (idx !== active) {
+      active = idx;
+      capCount.textContent = String(idx + 1).padStart(2, "0") + " / " + N;
+      capTitle.textContent = RING[idx].title;
+      cards.forEach((c, k) => { c.tabIndex = k === idx ? 0 : -1; });
+    }
+  }
+  function tick() {
+    if (!dragging) {
+      if (Math.abs(vel) > 0.05) { rot += vel; vel *= 0.93; target = Math.round(rot / STEP) * STEP; }
+      else { vel = 0; rot += (target - rot) * ease; if (Math.abs(target - rot) < 0.01) rot = target; }
+    }
+    render();
+    requestAnimationFrame(tick);
+  }
+  const goTo = steps => { vel = 0; target = Math.round(target / STEP) * STEP + steps * STEP; };
+  function bringToFront(i) {
+    const d = norm(i * STEP - rot);
+    vel = 0; target = Math.round((rot + d) / STEP) * STEP;
+  }
+
+  // autoplay: one photo every 3.2 s, paused on hover, drag, hidden tab or off screen
+  if (!reduced) setInterval(() => {
+    if (!dragging && !hovering && inView && !document.hidden && !lb.open && Math.abs(target - rot) < 0.5) goTo(1);
+  }, 3200);
+  new IntersectionObserver(es => { inView = es[0].isIntersecting; }, { threshold: 0.25 }).observe(stage);
+  stage.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") hovering = true; });
+  stage.addEventListener("pointerleave", () => { hovering = false; });
+
+  // drag / swipe with momentum
+  stage.addEventListener("pointerdown", e => {
+    if (e.button !== 0) return;
+    dragging = true; moved = 0; lastX = e.clientX; vel = 0;
+    stage.classList.add("dragging");
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX; lastX = e.clientX; moved += Math.abs(dx);
+    const d = -dx * (STEP / (cw * 1.05));
+    rot += d; vel = d;
+  });
+  const end = e => {
+    if (!dragging) return;
+    dragging = false; stage.classList.remove("dragging");
+    if (moved < 6) {                                   // a tap, not a drag
+      vel = 0;
+      const hit = document.elementsFromPoint(e.clientX, e.clientY).find(el => el.classList && el.classList.contains("card"));
+      if (hit) {
+        const i = cards.indexOf(hit);
+        if (i === active && Math.abs(target - rot) < 1) openLb(RING, i); else bringToFront(i);
+      }
+    } else {
+      vel = Math.max(-6, Math.min(6, vel));
+      target = Math.round((rot + vel * 12) / STEP) * STEP;
+    }
+  };
+  stage.addEventListener("pointerup", end);
+  stage.addEventListener("pointercancel", end);
+
+  // keyboard: arrows spin, Enter opens the front photo
+  stage.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") { goTo(1); e.preventDefault(); }
+    if (e.key === "ArrowLeft") { goTo(-1); e.preventDefault(); }
+    if (e.key === "Enter" || e.key === " ") { openLb(RING, active); e.preventDefault(); }
+  });
+  document.getElementById("ring-prev").addEventListener("click", () => goTo(-1));
+  document.getElementById("ring-next").addEventListener("click", () => goTo(1));
+
+  measure(); render();
+  addEventListener("resize", measure);
+  requestAnimationFrame(tick);
+})();
 
 // ---------- booking form ----------
 const form = document.getElementById("book"), area = document.getElementById("book-area"), err = document.getElementById("err");
