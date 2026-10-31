@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="bs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajla Hero Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/*
+  AJLA WEDDINGS — hero animation prototype.
+  Three variants of "10 chosen photos rotating as soon as the page opens":
+    A. triptych  (recommended) — 3 panels, centre in colour, slow crossfade + gentle zoom
+    B. reveal    — one large frame, editorial curtain-wipe between photos
+    C. marquee   — slow endless film-strip (use mid-page, not as the hero)
+  Rules taken from the client feedback videos:
+    - never blink: the next photo is fully decoded before it is shown
+    - not too fast: ~5 s per photo, 1.4 s transition
+    - swipeable with a finger, plus arrows
+    - pauses when the tab is hidden; calm fallback for prefers-reduced-motion
+*/
+:root {
+  --bg: #f2eee8;
+  --ink: #20201f;
+  --muted: #7a746c;
+  --line: #d8cec3;
+  --accent: #ad5e43;
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --sans: "Manrope", Arial, sans-serif;
+  --hold: 5000ms;      /* how long each photo stays */
+  --fade: 1400ms;      /* crossfade length */
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+/* ---------- header + brand intro ---------- */
+.top { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; align-items: center; justify-content: space-between;
+  padding: 22px clamp(16px, 4vw, 48px); pointer-events: none; }
+.top > * { pointer-events: auto; }
+.brand { font-family: var(--serif); font-weight: 500; font-size: clamp(22px, 3vw, 34px); letter-spacing: .28em; margin: 0; white-space: nowrap; }
+.brand span { display: inline-block; opacity: 0; transform: translateY(0.6em); filter: blur(4px);
+  animation: letterIn 900ms cubic-bezier(.2,.7,.2,1) forwards; animation-delay: calc(var(--i) * 55ms + 250ms); }
+.brand .gap { width: .5em; }
+@keyframes letterIn { to { opacity: 1; transform: none; filter: none; } }
+.lang { font-size: 12px; letter-spacing: .18em; display: flex; gap: 10px; }
+.lang button { background: none; border: 0; padding: 4px 0; font: inherit; letter-spacing: inherit; color: var(--muted); cursor: pointer; border-bottom: 1px solid transparent; }
+.lang button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
+
+/* ---------- variant switcher (prototype only) ---------- */
+.switch { position: fixed; z-index: 30; left: 50%; top: 72px; transform: translateX(-50%); display: flex; gap: 4px;
+  background: rgba(255,255,255,.85); backdrop-filter: blur(8px); padding: 4px; border: 1px solid var(--line); }
+.switch button { border: 0; background: none; padding: 9px 14px; font: 500 11px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); cursor: pointer; }
+.switch button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+/* ---------- shared hero frame ---------- */
+.hero { position: relative; height: 100svh; min-height: 560px; overflow: hidden; display: none; }
+.hero.active { display: block; }
+.hero-caption { position: absolute; z-index: 5; left: 0; right: 0; bottom: 84px; text-align: center; pointer-events: none; }
+.hero-caption p { margin: 0; font-family: var(--serif); font-style: italic; font-size: clamp(18px, 2.2vw, 26px); }
+.hero-caption small { display: block; margin-top: 8px; font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--muted); }
+.counter { font-variant-numeric: tabular-nums; }
+
+.layer { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0;
+  transition: opacity var(--fade) ease, transform calc(var(--hold) + var(--fade)) linear; will-change: opacity, transform; }
+.layer.on { opacity: 1; z-index: 2; }
+.layer.under { z-index: 1; }
+.ph { background-color: #cfc6bb; }  /* shown only if an image fails to load */
+
+.nav { position: absolute; z-index: 6; bottom: 30px; display: flex; gap: 18px; left: 50%; transform: translateX(-50%); align-items: center; font-size: 12px; letter-spacing: .2em; }
+.nav button { width: 40px; height: 40px; border: 1px solid var(--line); background: rgba(242,238,232,.7); cursor: pointer; font-size: 16px; color: var(--ink); }
+.nav button:focus-visible, .switch button:focus-visible, .lang button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- A. triptych ---------- */
+.tri { position: absolute; inset: 124px clamp(16px, 4vw, 48px) 150px; display: grid; grid-template-columns: 1fr 1.35fr 1fr; grid-template-rows: minmax(0, 1fr); gap: clamp(8px, 1.4vw, 18px); align-items: center; }
+.slot { position: relative; overflow: hidden; height: 100%; }
+.slot.side { height: 78%; }
+.slot.side .layer { filter: grayscale(1) contrast(.95); }
+.slot.center .layer { transform: scale(1.06); }
+.slot.center .layer.on { transform: scale(1); }
+@media (max-width: 720px) {
+  .tri { grid-template-columns: .45fr 1fr .45fr; inset: 124px 0 150px; }
+}
+
+/* ---------- B. reveal ---------- */
+.reveal { position: absolute; inset: 124px clamp(16px, 22vw, 360px) 150px; overflow: hidden; }
+.reveal .layer { opacity: 1; clip-path: inset(100% 0 0 0); transition: clip-path var(--fade) cubic-bezier(.77,0,.18,1), transform calc(var(--hold) + var(--fade)) linear; transform: scale(1.08); }
+.reveal .layer.on { clip-path: inset(0 0 0 0); transform: scale(1); }
+.reveal .layer.under { clip-path: inset(0 0 0 0); }
+@media (max-width: 720px) { .reveal { inset: 124px 16px 150px; } }
+
+/* ---------- C. marquee ---------- */
+.marquee { position: absolute; inset: 120px 0 170px; overflow: hidden; display: flex; align-items: center; }
+.track { display: flex; gap: 16px; width: max-content; animation: drift 70s linear infinite; }
+.track img, .track .tile { height: min(56vh, 520px); aspect-ratio: 2 / 3; object-fit: cover; display: block; background: #cfc6bb; }
+.marquee:hover .track { animation-play-state: paused; }
+@keyframes drift { to { transform: translateX(-50%); } }
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .brand span { animation: none; opacity: 1; transform: none; filter: none; }
+  .layer { transition: opacity 600ms ease; transform: none !important; }
+  .reveal .layer { transition: clip-path 1ms; }
+  .track { animation: none; }
+}
+
+.below { padding: 120px clamp(16px, 8vw, 120px); max-width: 980px; margin: 0 auto; text-align: center; }
+.below h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(32px, 5vw, 56px); margin: 0 0 18px; line-height: 1.05; }
+.below p { color: var(--muted); line-height: 1.7; max-width: 560px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1 class="brand" aria-label="AJLA WEDDINGS"></h1>
+  <div class="lang" role="group" aria-label="Jezik / Language">
+    <button type="button" data-lang="bs" aria-pressed="true">BS</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<main>
+  <!-- A. triptych -->
+  <section class="hero active" id="v-triptych" aria-roledescription="carousel" aria-label="Odabrane fotografije">
+    <div class="tri">
+      <div class="slot side" data-offset="-1"></div>
+      <div class="slot center" data-offset="0"></div>
+      <div class="slot side" data-offset="1"></div>
+    </div>
+    <div class="hero-caption"><p data-i18n="tagline">Umjetnost, stil i iskrene emocije.</p><small data-i18n="place">Sarajevo · BiH · Evropa</small></div>
+    <div class="nav"><button type="button" data-dir="-1" aria-label="Prethodna">←</button><span class="counter" aria-live="polite">01 / 10</span><button type="button" data-dir="1" aria-label="Sljedeća">→</button></div>
+  </section>
+
+  <!-- B. reveal -->
+  <section class="hero" id="v-reveal" aria-roledescription="carousel" aria-label="Odabrane fotografije">
+    <div class="reveal"></div>
+    <div class="hero-caption"><p data-i18n="tagline">Umjetnost, stil i iskrene emocije.</p><small data-i18n="place">Sarajevo · BiH · Evropa</small></div>
+    <div class="nav"><button type="button" data-dir="-1" aria-label="Prethodna">←</button><span class="counter" aria-live="polite">01 / 10</span><button type="button" data-dir="1" aria-label="Sljedeća">→</button></div>
+  </section>
+
+  <!-- C. marquee -->
+  <section class="hero" id="v-marquee" aria-label="Odabrane fotografije">
+    <div class="marquee"><div class="track"></div></div>
+    <div class="hero-caption"><p data-i18n="tagline">Umjetnost, stil i iskrene emocije.</p><small data-i18n="place">Sarajevo · BiH · Evropa</small></div>
+  </section>
+
+  <section class="below">
+    <h2 data-i18n="h2">Vaš dan, viđen drugačije.</h2>
+    <p data-i18n="intro">Editorial fotograf vjenčanja iz Sarajeva. Dostupna širom Bosne i Hercegovine i za odabrane destinacije u Evropi.</p>
+  </section>
+</main>
+
+<nav class="switch" aria-label="Prototype variant">
+  <button type="button" data-variant="triptych" aria-pressed="true">A · Triptych</button>
+  <button type="button" data-variant="reveal" aria-pressed="false">B · Reveal</button>
+  <button type="button" data-variant="marquee" aria-pressed="false">C · Marquee</button>
+</nav>
+
+<script>
+// The client will send her 10 hero photos; until then these are the photos already on ajla-weddings.vercel.app.
+const BASE = "https://ajla-weddings.vercel.app/images/";
+const PHOTOS = [
+  "ajla-weddings-editorial-01.webp", "weddings/a-m-117.webp", "ajla-weddings-editorial-02.webp",
+  "weddings/img-9272.webp", "approach-movement.jpg", "weddings/a-m-196.webp",
+  "ajla-weddings-editorial-03.webp", "weddings/n-k-4.webp", "approach-connection.jpg", "closing-dance.jpg"
+].map(p => BASE + p);
+
+const HOLD = 5000;
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ---- i18n (BS default, EN second, as the client asked) ----
+const T = {
+  bs: { tagline: "Umjetnost, stil i iskrene emocije.", place: "Sarajevo · BiH · Evropa",
+        h2: "Vaš dan, viđen drugačije.", intro: "Editorial fotograf vjenčanja iz Sarajeva. Dostupna širom Bosne i Hercegovine i za odabrane destinacije u Evropi." },
+  en: { tagline: "Art, style and honest emotion.", place: "Sarajevo · Bosnia & Herzegovina · Europe",
+        h2: "Your day, seen differently.", intro: "Editorial wedding photographer based in Sarajevo. Available across Bosnia & Herzegovina and for selected destinations in Europe." }
+};
+document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
+  const lang = b.dataset.lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll(".lang button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = T[lang][el.dataset.i18n]; });
+}));
+
+// ---- brand letters jump in once on load ----
+const brand = document.querySelector(".brand");
+[..."AJLA WEDDINGS"].forEach((ch, i) => {
+  const s = document.createElement("span");
+  if (ch === " ") s.className = "gap"; else s.textContent = ch;
+  s.style.setProperty("--i", i);
+  s.setAttribute("aria-hidden", "true");
+  brand.appendChild(s);
+});
+
+// ---- decode-before-show: the fix for "blinking" ----
+const decoded = new Map();
+function load(src) {
+  if (!decoded.has(src)) {
+    const img = new Image();
+    img.decoding = "async";
+    img.src = src;
+    decoded.set(src, img.decode().then(() => true, () => false));
+  }
+  return decoded.get(src);
+}
+PHOTOS.slice(0, 3).forEach(load);   // first screen immediately
+addEventListener("load", () => PHOTOS.forEach(load)); // the rest after the page is ready
+
+// A frame holds two stacked layers and crossfades between them.
+function makeFrame(el) {
+  const a = document.createElement("div"), b = document.createElement("div");
+  a.className = b.className = "layer";
+  el.append(a, b);
+  let front = a, back = b;
+  return async function show(src) {
+    const ok = await load(src);
+    back.classList.toggle("ph", !ok);
+    back.style.backgroundImage = ok ? `url("${src}")` : "none";
+    // force style flush so the transition always runs (no instant swap = no blink)
+    void back.offsetWidth;
+    front.classList.remove("on"); front.classList.add("under");
+    back.classList.remove("under"); back.classList.add("on");
+    setTimeout(() => front.classList.remove("under"), 1600);
+    [front, back] = [back, front];
+  };
+}
+
+function carousel(section, frames, offsets) {
+  let i = 0, timer = null, busy = false;
+  const counter = section.querySelector(".counter");
+  const n = PHOTOS.length;
+  async function go(to) {
+    if (busy) return;
+    busy = true;
+    i = (to + n) % n;
+    counter.textContent = String(i + 1).padStart(2, "0") + " / " + n;
+    // side panels change a moment after the centre: a calm, staggered rhythm
+    await Promise.all(frames.map((show, k) =>
+      new Promise(r => setTimeout(() => show(PHOTOS[(i + offsets[k] + n) % n]).then(r), Math.abs(offsets[k]) * 180))));
+    busy = false;
+  }
+  function start() { stop(); if (!reduced) timer = setInterval(() => go(i + 1), HOLD); }
+  function stop() { clearInterval(timer); timer = null; }
+  section.querySelectorAll(".nav button").forEach(b => b.addEventListener("click", () => { go(i + +b.dataset.dir); start(); }));
+  // finger swipe, left and right
+  let x0 = null;
+  section.addEventListener("pointerdown", e => { x0 = e.clientX; });
+  section.addEventListener("pointerup", e => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) { go(i + (dx < 0 ? 1 : -1)); start(); }
+  });
+  section.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") { go(i + 1); start(); }
+    if (e.key === "ArrowLeft") { go(i - 1); start(); }
+  });
+  return { start, stop, first: () => go(0) };
+}
+
+const tri = document.getElementById("v-triptych");
+const triSlots = [...tri.querySelectorAll(".slot")];
+const triCar = carousel(tri, triSlots.map(makeFrame), triSlots.map(s => +s.dataset.offset));
+
+const rev = document.getElementById("v-reveal");
+const revCar = carousel(rev, [makeFrame(rev.querySelector(".reveal"))], [0]);
+
+// marquee: list twice so the loop is seamless
+const track = document.querySelector(".track");
+[...PHOTOS, ...PHOTOS].forEach((src, k) => {
+  const img = document.createElement("img");
+  img.src = src; img.alt = ""; img.loading = k < 6 ? "eager" : "lazy"; img.decoding = "async";
+  img.onerror = () => { const d = document.createElement("div"); d.className = "tile"; img.replaceWith(d); };
+  track.appendChild(img);
+});
+
+const cars = { triptych: triCar, reveal: revCar };
+let current = "triptych";
+function activate(v) {
+  Object.values(cars).forEach(c => c.stop());
+  current = v;
+  document.querySelectorAll(".hero").forEach(h => h.classList.toggle("active", h.id === "v-" + v));
+  document.querySelectorAll(".switch button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.variant === v)));
+  if (cars[v]) { cars[v].first(); cars[v].start(); }
+}
+document.querySelectorAll(".switch button").forEach(b => b.addEventListener("click", () => activate(b.dataset.variant)));
+
+// pause when the tab is hidden so it never "jumps" several photos on return
+document.addEventListener("visibilitychange", () => {
+  if (!cars[current]) return;
+  document.hidden ? cars[current].stop() : cars[current].start();
+});
+
+const start = new URLSearchParams(location.search).get("v");
+activate(cars[start] || start === "marquee" ? start : "triptych");
+</script>
+</body>
+</html>
